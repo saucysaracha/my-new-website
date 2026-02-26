@@ -11,6 +11,13 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    @font-face {
+      font-family: 'Nevera';
+      src: url('Fonts/Nevera-Regular.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
     :root {
       --bg: #c8c5bc;
       --bg2: #bfbcb3;
@@ -99,7 +106,7 @@
       display: block; width: 18px; height: 1px; background: var(--text);
     }
     .nav-logo {
-      font-family: var(--mono);
+      font-family: 'Nevera', var(--mono);
       font-size: 13px;
       letter-spacing: 0.06em;
       color: var(--text);
