@@ -153,9 +153,14 @@
       width: 380px;
       z-index: 10;
       border-radius: 18px;
+      animation-name: cardInHero;
       animation-delay: 0.05s;
     }
-    .card-hero:hover { transform: translate(-50%, -53%) scale(1.02) !important; }
+    .card-hero:hover { transform: translate(-50%, -50%) scale(1.02) !important; }
+    @keyframes cardInHero {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(0.92) translateY(16px); }
+      to   { opacity: 1; transform: translate(-50%, -50%); }
+    }
     .hero-img-area {
       width: 100%; height: 300px;
       background: linear-gradient(160deg, #2a2a28 0%, #1a1a18 100%);
@@ -395,37 +400,37 @@
     /* LEFT COLUMN */
     /* Top-left: icon (Specs) */
     .c-specs {
-      left: 3%; top: 16%;
+      left: 3%; top: 13%;
       width: 110px;
       animation-delay: 0.3s;
     }
     /* Blog card like "Come to Play" */
     .c-vlog {
-      left: 8%; top: 32%;
+      left: 7%; top: 30%;
       width: 190px; height: 170px;
       animation-delay: 0.2s;
     }
     /* Design (portrait photo nav) */
     .c-portrait {
-      left: 3%; top: 58%;
+      left: 3%; top: 56%;
       width: 110px;
       animation-delay: 0.35s;
     }
     /* About nav */
     .c-about {
-      left: 12%; top: 68%;
+      left: 3%; top: 74%;
       width: 110px;
       animation-delay: 0.4s;
     }
     /* Blog nav */
     .c-blog {
-      left: 20%; top: 54%;
+      left: 18%; top: 53%;
       width: 110px;
       animation-delay: 0.45s;
     }
     /* App card like Nothing X */
     .c-app {
-      left: 3%; top: 78%;
+      left: 16%; top: 76%;
       width: 105px;
       animation-delay: 0.5s;
     }
@@ -433,25 +438,25 @@
     /* RIGHT COLUMN */
     /* Performance / Brand Collabs */
     .c-brand {
-      right: 3%; top: 16%;
+      right: 3%; top: 14%;
       width: 155px; height: 155px;
       animation-delay: 0.25s;
     }
     /* Controls / YouTube */
     .c-youtube {
-      right: 1%; top: 40%;
+      right: 1%; top: 50%;
       width: 120px;
       animation-delay: 0.3s;
     }
     /* Inside Sound / Gear */
     .c-gear {
-      right: 10%; top: 30%;
+      right: 10%; top: 34%;
       width: 165px;
       animation-delay: 0.2s;
     }
     /* Soundscape / Travel */
     .c-travel {
-      right: 2%; top: 58%;
+      right: 2%; top: 64%;
       width: 210px; height: 210px;
       animation-delay: 0.35s;
     }
