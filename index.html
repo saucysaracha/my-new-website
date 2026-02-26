@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@bysaraschultz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Share+Tech&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #c8c5bc;
+      --bg2: #bfbcb3;
+      --glass-bg: rgba(255,255,255,0.55);
+      --glass-border: rgba(255,255,255,0.75);
+      --glass-shadow: 0 4px 32px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.07);
+      --text: #1a1a18;
+      --text-mid: #555550;
+      --text-dim: #888880;
+      --accent: #c0392b;
+      --mono: 'Share Tech Mono', monospace;
+      --serif: 'DM Serif Display', serif;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Dot grid background */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(0,0,0,0.18) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Subtle grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 7px; height: 7px;
+      background: var(--text);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.15s, background 0.2s;
+    }
+    .cursor-ring {
+      width: 28px; height: 28px;
+      border: 1px solid rgba(26,26,24,0.35);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%,-50%);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 50%; transform: translateX(-50%);
+      z-index: 200;
+      margin-top: 16px;
+      width: 460px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+    }
+    .nav-hamburger {
+      display: flex; flex-direction: column; gap: 4px; cursor: pointer;
+    }
+    .nav-hamburger span {
+      display: block; width: 18px; height: 1px; background: var(--text);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-cart {
+      width: 28px; height: 28px;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .nav-cart svg { width: 14px; height: 14px; stroke: var(--text); fill: none; }
+
+    /* SCENE */
+    .scene {
+      position: fixed; inset: 0;
+      z-index: 1;
+    }
+
+    /* CARDS - base */
+    .card {
+      position: absolute;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--glass-shadow);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+      opacity: 0;
+      animation: cardIn 0.6s cubic-bezier(0.34,1.2,0.64,1) forwards;
+    }
+    .card:hover {
+      transform: scale(1.03) translateY(-3px) !important;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 50 !important;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(0.92) translateY(16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* HERO CARD — center */
+    .card-hero {
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      width: 380px;
+      z-index: 10;
+      border-radius: 18px;
+      animation-delay: 0.05s;
+    }
+    .card-hero:hover { transform: translate(-50%, -53%) scale(1.02) !important; }
+    .hero-img-area {
+      width: 100%; height: 300px;
+      background: linear-gradient(160deg, #2a2a28 0%, #1a1a18 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-img-placeholder {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      text-align: center;
+    }
+    .hero-img-placeholder .big {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 52px;
+      color: rgba(255,255,255,0.08);
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    /* Portrait silhouette shape */
+    .hero-img-area::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 160px; height: 220px;
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.07) 0%, transparent 70%);
+      border-radius: 80px 80px 0 0;
+    }
+
+    .hero-body {
+      padding: 20px 24px 24px;
+    }
+    .hero-handle {
+      font-family: var(--mono);
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .hero-features {
+      list-style: none;
+      margin-bottom: 16px;
+    }
+    .hero-features li {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .hero-features li:last-child { border-bottom: none; }
+    .hero-features li svg { width: 13px; height: 13px; stroke: var(--text-dim); fill: none; flex-shrink: 0; }
+    .hero-tagline-row {
+      margin-bottom: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+    }
+    .hero-cta {
+      width: 100%;
+      padding: 14px;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .hero-cta:hover { background: #333; }
+
+    /* NAV SECTION CARDS */
+    .card-nav {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0;
+    }
+    .card-nav-img {
+      width: 100%; 
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 14px 14px 0 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-nav-img svg { opacity: 0.25; }
+    .card-nav-label {
+      padding: 14px 16px 6px;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+    .card-nav-sub {
+      padding: 0 16px 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* Small icon card */
+    .card-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      gap: 12px;
+    }
+    .card-icon-symbol {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-icon-symbol svg { width: 22px; height: 22px; stroke: var(--text-mid); fill: none; }
+    .card-icon-label {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-align: center;
+    }
+    .card-icon-sub {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* Image preview card (like "Come to Play" film card) */
+    .card-preview {
+      position: relative;
+    }
+    .card-preview-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .card-preview-bg {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif);
+      font-style: italic;
+    }
+    .card-preview-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 12px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.45), transparent);
+    }
+    .card-preview-play {
+      position: absolute;
+      top: 10px; left: 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.8);
+      background: rgba(0,0,0,0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .card-preview-duration {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
+      background: rgba(0,0,0,0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .card-preview-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+    .card-preview-sub {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-top: 3px;
+    }
+
+    /* Sound/accent card with icon */
+    .card-feature {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-feature-icon svg { width: 24px; height: 24px; stroke: var(--text-mid); fill: none; }
+    .card-feature-label {
+      font-family: var(--mono);
+      font-size: 15px;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .card-feature-sub {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ─── CARD POSITIONS ─── */
+
+    /* LEFT COLUMN */
+    /* Top-left: icon (Specs) */
+    .c-specs {
+      left: 3%; top: 16%;
+      width: 110px;
+      animation-delay: 0.3s;
+    }
+    /* Blog card like "Come to Play" */
+    .c-vlog {
+      left: 8%; top: 32%;
+      width: 190px; height: 170px;
+      animation-delay: 0.2s;
+    }
+    /* Design (portrait photo nav) */
+    .c-portrait {
+      left: 3%; top: 58%;
+      width: 110px;
+      animation-delay: 0.35s;
+    }
+    /* About nav */
+    .c-about {
+      left: 12%; top: 68%;
+      width: 110px;
+      animation-delay: 0.4s;
+    }
+    /* Blog nav */
+    .c-blog {
+      left: 20%; top: 54%;
+      width: 110px;
+      animation-delay: 0.45s;
+    }
+    /* App card like Nothing X */
+    .c-app {
+      left: 3%; top: 78%;
+      width: 105px;
+      animation-delay: 0.5s;
+    }
+
+    /* RIGHT COLUMN */
+    /* Performance / Brand Collabs */
+    .c-brand {
+      right: 3%; top: 16%;
+      width: 155px; height: 155px;
+      animation-delay: 0.25s;
+    }
+    /* Controls / YouTube */
+    .c-youtube {
+      right: 1%; top: 40%;
+      width: 120px;
+      animation-delay: 0.3s;
+    }
+    /* Inside Sound / Gear */
+    .c-gear {
+      right: 10%; top: 30%;
+      width: 165px;
+      animation-delay: 0.2s;
+    }
+    /* Soundscape / Travel */
+    .c-travel {
+      right: 2%; top: 58%;
+      width: 210px; height: 210px;
+      animation-delay: 0.35s;
+    }
+
+    /* accent dot */
+    .red-dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* COLOR BGs for preview cards */
+    .bg-forest {
+      background: linear-gradient(135deg, #2d3a2e 0%, #1a2218 100%);
+    }
+    .bg-studio {
+      background: linear-gradient(135deg, #2a2520 0%, #1a1510 100%);
+    }
+    .bg-city {
+      background: linear-gradient(135deg, #1e2028 0%, #0e1018 100%);
+    }
+    .bg-surf {
+      background: linear-gradient(135deg, #1a2a35 0%, #0e1820 100%);
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      z-index: 500;
+      background: rgba(180,175,165,0.5);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 22px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+      padding: 40px;
+      width: 480px;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+    }
+    .modal-overlay.open .modal { transform: scale(1); }
+    .modal-close {
+      position: absolute; top: 18px; right: 22px;
+      font-family: var(--mono); font-size: 20px;
+      color: var(--text-dim); cursor: pointer; background: none; border: none;
+    }
+    .modal h2 {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 8px;
+    }
+    .modal h3 {
+      font-family: var(--serif); font-style: italic;
+      font-size: 32px; line-height: 1.2;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .modal p {
+      font-family: var(--mono); font-size: 13px;
+      line-height: 1.8; color: var(--text-mid);
+      margin-bottom: 14px;
+    }
+    .modal-tag {
+      display: inline-block;
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      background: rgba(0,0,0,0.06); border-radius: 4px;
+      padding: 4px 10px; margin-right: 6px; margin-bottom: 16px;
+      color: var(--text-mid);
+    }
+
+    /* Nav menu panel */
+    .menu-panel {
+      position: fixed;
+      top: 60px; left: 50%; transform: translateX(-50%);
+      z-index: 300;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      backdrop-filter: blur(24px);
+      box-shadow: var(--glass-shadow);
+      padding: 12px 8px;
+      width: 220px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      transform: translateX(-50%) translateY(-6px);
+    }
+    .menu-panel.open {
+      opacity: 1; pointer-events: all;
+      transform: translateX(-50%) translateY(0);
+    }
+    .menu-item {
+      display: block; width: 100%;
+      padding: 10px 16px;
+      font-family: var(--mono); font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text); text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.15s;
+      cursor: pointer; border: none; background: none; text-align: left;
+    }
+    .menu-item:hover { background: rgba(0,0,0,0.06); }
+
+    @media (max-width: 768px) {
+      body { overflow: auto; }
+      .scene {
+        position: relative;
+        height: 1400px;
+      }
+      nav { width: 90%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-hamburger" id="menuBtn">
+      <span></span><span></span>
+    </div>
+    <a class="nav-logo" href="#">@BYSARASCHULTZ</a>
+    <div class="nav-cart">
+      <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+  </nav>
+
+  <!-- Menu panel -->
+  <div class="menu-panel" id="menuPanel">
+    <button class="menu-item" onclick="openModal('about')">About</button>
+    <button class="menu-item" onclick="openModal('portfolio')">Portfolio</button>
+    <button class="menu-item" onclick="openModal('blog')">Blog</button>
+    <a class="menu-item" href="https://instagram.com/bysaraschultz" target="_blank">Instagram ↗</a>
+    <a class="menu-item" href="https://youtube.com" target="_blank">YouTube ↗</a>
+  </div>
+
+  <!-- SCENE -->
+  <div class="scene">
+
+    <!-- CENTER: Hero card -->
+    <div class="card card-hero" id="heroCard">
+      <div class="hero-img-area">
+        <div class="hero-img-placeholder">
+          <span class="big">Sara</span>
+          your photo here
+        </div>
+      </div>
+      <div class="hero-body">
+        <div class="hero-handle">bysaraschultz</div>
+        <ul class="hero-features">
+          <li>
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M20 5h-2.5l-1-2h-9l-1 2H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/></svg>
+            PHOTOGRAPHER · NYC
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            CREATOR · 21K FOLLOWERS
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            9–5 + FULL-TIME DREAM
+          </li>
+        </ul>
+        <button class="hero-cta" onclick="openModal('about')">EXPLORE → MY WORLD</button>
+      </div>
+    </div>
+
+    <!-- LEFT: Specs / icon card -->
+    <div class="card card-icon c-specs" onclick="openModal('specs')">
+      <div style="padding:20px 16px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div class="card-icon-symbol">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div class="card-icon-label">Explore</div>
+        <div class="card-icon-sub">My Work</div>
+      </div>
+    </div>
+
+    <!-- LEFT: Vlog card like "Come to Play" -->
+    <div class="card card-preview c-vlog" onclick="openModal('vlog')">
+      <div class="card-preview-bg bg-forest" style="height:100%;">
+        <div style="font-size:36px; color:rgba(255,255,255,0.12); letter-spacing:-0.02em;">NYC → LA</div>
+      </div>
+      <div class="card-preview-play">▶ PLAY</div>
+      <div class="card-preview-duration">8:24</div>
+      <div class="card-preview-overlay">
+        <div class="card-preview-title">Chasing Light</div>
+        <div class="card-preview-sub">Vlog</div>
+      </div>
+    </div>
+
+    <!-- LEFT: Portrait nav card -->
+    <div class="card card-icon c-portrait" onclick="openModal('portfolio')">
+      <div style="padding:18px 14px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div class="card-icon-symbol">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div class="card-icon-label" style="font-size:12px;">Portfolio</div>
+        <div class="card-icon-sub">Photos</div>
+      </div>
+    </div>
+
+    <!-- LEFT: About card -->
+    <div class="card card-icon c-about" onclick="openModal('about')">
+      <div style="padding:18px 14px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div class="card-icon-symbol">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="card-icon-label" style="font-size:12px;">About</div>
+        <div class="card-icon-sub">The Story</div>
+      </div>
+    </div>
+
+    <!-- LEFT: Blog card -->
+    <div class="card card-icon c-blog" onclick="openModal('blog')">
+      <div style="padding:18px 14px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div class="card-icon-symbol">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="card-icon-label" style="font-size:12px;">Blog</div>
+        <div class="card-icon-sub">Writing</div>
+      </div>
+    </div>
+
+    <!-- LEFT bottom: App card (like Nothing X) -->
+    <div class="card card-icon c-app" onclick="openModal('contact')">
+      <div style="padding:16px 12px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+        <div style="width:42px;height:42px;border-radius:10px;background:#1a1a18;display:flex;align-items:center;justify-content:center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.4)" fill="none" stroke-width="1.5"><path d="M4 4l16 8-16 8V4z"/></svg>
+        </div>
+        <div class="card-icon-label" style="font-size:11px;">Contact</div>
+        <div class="card-icon-sub">Work With Me</div>
+        <div class="red-dot"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Brand card (big photo, like headphones top-right) -->
+    <div class="card c-brand" onclick="openModal('brand')">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#e8e2d8,#d0c8bc);border-radius:18px;display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-start;padding:14px;">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.15em;color:var(--text-dim);text-transform:uppercase;text-align:right;">Brand Collabs</div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+          <svg width="60" height="60" viewBox="0 0 24 24" stroke="rgba(0,0,0,0.15)" fill="none" stroke-width="0.8"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <div style="font-family:var(--mono);font-size:13px;color:var(--text);letter-spacing:0.03em;">Performance</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: YouTube / Controls card -->
+    <div class="card card-icon c-youtube" onclick="openModal('youtube')">
+      <div style="padding:18px 14px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div class="card-icon-symbol">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </div>
+        <div class="card-icon-label" style="font-size:12px;">YouTube</div>
+        <div class="card-icon-sub">Channel</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Gear / Inside sound -->
+    <div class="card card-feature c-gear" onclick="openModal('gear')">
+      <div class="card-feature-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 5.34L3.93 6.75M19.07 19.07l-1.41-1.41M5.34 18.66l-1.41 1.41M21 12h-2M5 12H3M12 19v2M12 3V1"/></svg>
+      </div>
+      <div class="card-feature-label">Gear & Lighting</div>
+      <div class="card-feature-sub">Hardware</div>
+    </div>
+
+    <!-- RIGHT: Travel / Soundscape big card -->
+    <div class="card card-preview c-travel" onclick="openModal('travel')">
+      <div class="card-preview-bg bg-surf" style="height:100%;border-radius:18px;overflow:hidden;position:relative;">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <svg width="64" height="64" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.1)" fill="none" stroke-width="0.8"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(to top, rgba(0,0,0,0.5), transparent);">
+          <div style="font-family:var(--mono);font-size:14px;color:#fff;letter-spacing:0.03em;">Travel</div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:4px;">NYC · LA · PHX · Beyond</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scene -->
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal" style="position:relative;">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => {
+      mx=e.clientX; my=e.clientY;
+      cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+    });
+    (function animRing(){
+      rx+=(mx-rx)*0.1; ry+=(my-ry)*0.1;
+      ring.style.left=rx+'px'; ring.style.top=ry+'px';
+      requestAnimationFrame(animRing);
+    })();
+    document.querySelectorAll('.card, button, a').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ cursor.style.transform='translate(-50%,-50%) scale(2)'; ring.style.opacity='0.5'; });
+      el.addEventListener('mouseleave',()=>{ cursor.style.transform='translate(-50%,-50%) scale(1)'; ring.style.opacity='1'; });
+    });
+
+    // Menu
+    const menuBtn = document.getElementById('menuBtn');
+    const menuPanel = document.getElementById('menuPanel');
+    menuBtn.addEventListener('click', e => { e.stopPropagation(); menuPanel.classList.toggle('open'); });
+    document.addEventListener('click', () => menuPanel.classList.remove('open'));
+
+    // Modal content
+    const modalContents = {
+      about: `
+        <h2>The Story</h2>
+        <h3>photographer. creator. living the tension.</h3>
+        <p>I'm Sara — a NYC-based portrait photographer and content creator running a creative business on the side of a 9-5 tech job. It's chaotic. It's beautiful. It's mine.</p>
+        <p>I specialize in dreamy, moody portraits — grad shoots, brand collabs, moments that feel like frames from a film you can't stop thinking about.</p>
+        <span class="modal-tag">NYC</span><span class="modal-tag">Portrait</span><span class="modal-tag">Brand Collabs</span><span class="modal-tag">21K IG</span>
+        <p>Follow along on Instagram @bysaraschultz or watch the journey unfold on YouTube.</p>
+      `,
+      portfolio: `
+        <h2>Portfolio</h2>
+        <h3>The Work</h3>
+        <p>Dreamy, moody portraits shot across New York, Los Angeles, Phoenix, and beyond. Graduate portraits, editorial shoots, brand campaigns, surf photography, and drone work.</p>
+        <span class="modal-tag">Portraits</span><span class="modal-tag">Grad Shoots</span><span class="modal-tag">Aerial</span><span class="modal-tag">Surf</span>
+        <p>Clients include NANLITE, Godox, and Pixieset. Open for bookings — reach out via Instagram or email.</p>
+      `,
+      blog: `
+        <h2>Writing</h2>
+        <h3>The Blog</h3>
+        <p><strong>On running a creative business while clocking in at 9 AM.</strong> Nobody tells you that the hardest part isn't the shoot days — it's the Tuesday afternoons when you're on a work call and all you can think about is golden hour.</p>
+        <p><strong>What I learned shooting my first brand collab with NANLITE.</strong> Gear reviews are easy. Actually directing talent while operating a new light system for the first time? Different story.</p>
+        <p><strong>NYC winters and the ritual of escaping them.</strong> Every February I book a flight somewhere with actual sunlight. Not running away — running toward something I can't quite name yet.</p>
+      `,
+      vlog: `
+        <h2>Vlog</h2>
+        <h3>Chasing Light</h3>
+        <p>NYC → LA in 24 hours for a brand shoot. Follow along for the chaos, the golden hour, the gear talk, and the honest parts nobody shows.</p>
+        <span class="modal-tag">YouTube</span><span class="modal-tag">Travel</span><span class="modal-tag">BTS</span>
+        <p>New vlogs dropping on YouTube. Subscribe at youtube.com/@saraschultz</p>
+      `,
+      brand: `
+        <h2>Collaborations</h2>
+        <h3>Brand Partnerships</h3>
+        <p>I've worked with NANLITE, Godox, and Pixieset to create authentic content that resonates with photographers and creators. I only partner with brands I actually use and believe in.</p>
+        <span class="modal-tag">NANLITE</span><span class="modal-tag">Godox</span><span class="modal-tag">Pixieset</span>
+        <p>Interested in working together? Let's talk.</p>
+      `,
+      gear: `
+        <h2>Hardware</h2>
+        <h3>Gear & Lighting</h3>
+        <p>I shoot with a mix of natural light and strobes — NANLITE and Godox are my go-to for any studio or on-location work. Drone work with DJI. I'll always be honest about what's actually in my bag.</p>
+        <span class="modal-tag">NANLITE</span><span class="modal-tag">Godox</span><span class="modal-tag">DJI Drone</span>
+        <p>Lighting tips and gear breakdowns live on YouTube and the blog.</p>
+      `,
+      travel: `
+        <h2>On Location</h2>
+        <h3>NYC · LA · PHX · Beyond</h3>
+        <p>Home base is New York, but I'm frequently in Los Angeles and Phoenix for shoots, and I'll travel anywhere the light is good. Escaping NYC winters is practically a tradition at this point.</p>
+        <span class="modal-tag">New York</span><span class="modal-tag">Los Angeles</span><span class="modal-tag">Phoenix</span>
+        <p>Available for travel bookings — let's make something worth flying for.</p>
+      `,
+      youtube: `
+        <h2>Channel</h2>
+        <h3>YouTube</h3>
+        <p>Vlogs, behind-the-scenes, lighting tutorials, and honest conversations about running a creative business. Real stuff, not just the highlight reel.</p>
+        <span class="modal-tag">BTS</span><span class="modal-tag">Tutorials</span><span class="modal-tag">Vlogs</span>
+        <p>~886 subscribers and growing. Come watch the journey.</p>
+      `,
+      contact: `
+        <h2>Work With Me</h2>
+        <h3>Let's Create Something</h3>
+        <p>Available for portrait sessions, brand collaborations, videography, and creative direction. Based in NYC, available to travel.</p>
+        <span class="modal-tag">Bookings</span><span class="modal-tag">Brand Deals</span><span class="modal-tag">Travel Available</span>
+        <p>Reach out on Instagram @bysaraschultz or @saraschultzphoto — DMs are open.</p>
+      `,
+      specs: `
+        <h2>Explore</h2>
+        <h3>@bysaraschultz</h3>
+        <p>photographer. creator. living the tension between 9-5 and full-time dream.</p>
+        <span class="modal-tag">Portfolio</span><span class="modal-tag">Blog</span><span class="modal-tag">YouTube</span><span class="modal-tag">Collabs</span>
+        <p>Use the cards around you to explore different parts of my world — or open the menu at the top to navigate.</p>
+      `
+    };
+
+    function openModal(id) {
+      const overlay = document.getElementById('modalOverlay');
+      document.getElementById('modalContent').innerHTML = modalContents[id] || '<p>Coming soon.</p>';
+      overlay.classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+    function closeModalOutside(e) {
+      if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+    document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+  </script>
+</body>
+</html>
