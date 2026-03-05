@@ -42,12 +42,14 @@
       cursor: none;
     }
 
-    /* Dot grid background */
+    /* Image background */
     body::before {
       content: '';
       position: fixed; inset: 0;
-      background-image: radial-gradient(circle, rgba(0,0,0,0.28) 1px, transparent 1px);
-      background-size: 28px 28px;
+      background-image: url('retrodiscologo.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       pointer-events: none;
       z-index: 0;
     }
