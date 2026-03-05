@@ -458,60 +458,68 @@
       color: var(--text-dim);
     }
 
-    /* ─── CARD POSITIONS ─── */
+    /* ─── CARD POSITIONS — DESKTOP ─── */
 
-    /* LEFT COLUMN */
-    .c-specs {
-      left: 3%; top: 9%;
-      width: 110px;
-      animation-delay: 0.3s;
-    }
+    /* LEFT — top: Vlog (wide landscape) */
     .c-vlog {
-      left: 7%; top: 30%;
-      width: 190px; height: 170px;
+      left: 2%; top: 4%;
+      width: 232px; height: 158px;
+      animation-delay: 0.1s;
+    }
+    /* LEFT — mid: Portrait/Portfolio (tall) */
+    .c-portrait {
+      left: 16%; top: 27%;
+      width: 148px; height: 198px;
       animation-delay: 0.2s;
     }
-    .c-portrait {
-      left: 3%; top: 56%;
-      width: 110px;
-      animation-delay: 0.35s;
-    }
-    .c-about {
-      left: 3%; top: 79%;
-      width: 110px;
-      animation-delay: 0.4s;
-    }
-    .c-blog {
-      left: 18%; top: 54%;
-      width: 110px;
-      animation-delay: 0.45s;
-    }
-    .c-app {
-      left: 16%; top: 81%;
-      width: 105px;
-      animation-delay: 0.5s;
-    }
-
-    /* RIGHT COLUMN */
-    .c-brand {
-      right: 3%; top: 12%;
-      width: 155px; height: 155px;
+    /* LEFT — mid-lower: Specs (small icon) */
+    .c-specs {
+      left: 2%; top: 30%;
+      width: 112px;
       animation-delay: 0.25s;
     }
-    .c-youtube {
-      right: 1%; top: 67%;
-      width: 120px;
+    /* LEFT — lower: Brand (beige square) */
+    .c-brand {
+      left: 2%; top: 53%;
+      width: 170px; height: 122px;
       animation-delay: 0.3s;
     }
+    /* LEFT — lower-2: Blog (icon) */
+    .c-blog {
+      left: 16%; top: 59%;
+      width: 118px;
+      animation-delay: 0.35s;
+    }
+    /* LEFT — bottom: Contact (small) */
+    .c-app {
+      left: 2%; top: 73%;
+      width: 120px;
+      animation-delay: 0.4s;
+    }
+
+    /* RIGHT — top: About (tall icon) */
+    .c-about {
+      right: 21%; top: 4%;
+      width: 118px; height: 162px;
+      animation-delay: 0.15s;
+    }
+    /* RIGHT — mid: Gear & Lighting */
     .c-gear {
-      right: 17%; top: 67%;
-      width: 165px;
+      right: 3%; top: 23%;
+      width: 168px;
       animation-delay: 0.2s;
     }
+    /* RIGHT — lower: Travel (large square) */
     .c-travel {
-      right: 2%; top: 37%;
-      width: 210px; height: 210px;
-      animation-delay: 0.35s;
+      right: 19%; top: 47%;
+      width: 184px; height: 184px;
+      animation-delay: 0.25s;
+    }
+    /* RIGHT — lower-2: YouTube (small icon) */
+    .c-youtube {
+      right: 3%; top: 57%;
+      width: 122px;
+      animation-delay: 0.3s;
     }
 
     /* accent dot */
@@ -624,22 +632,52 @@
     @media (max-width: 768px) {
       body { overflow: auto; }
       .intro-section { height: 100vh; }
+      nav { width: 90%; }
+
+      /* Scene: tall enough for all cards stacked */
       .scene {
         position: relative;
-        height: 1400px;
+        height: 1560px;
       }
-      nav { width: 90%; }
-      /* On portrait mobile, render video at natural 16:9 width so it looks like a landscape banner */
+
+      /* Disable entrance animations on mobile to avoid transform conflicts */
+      .card { animation: none; opacity: 1; }
+
+      /* Hero: full-width at top, no centering translate */
+      .card-hero {
+        left: 50%;
+        top: 24px;
+        transform: translateX(-50%);
+        width: 88%;
+        max-width: 360px;
+      }
+      .card-hero:hover { transform: translateX(-50%) scale(1.02) !important; }
+
+      /* ROW 2 — vlog (wide) + portrait side by side */
+      .c-vlog    { left: 2%;  top: 530px; width: 57%; height: 152px; }
+      .c-portrait{ right: 2%; top: 530px; width: 37%; height: 152px; }
+
+      /* ROW 3 — specs, brand, about */
+      .c-specs   { left: 2%;  top: 702px; width: 29%; height: auto; }
+      .c-brand   { left: 34%; top: 702px; width: 32%; height: 130px; }
+      .c-about   { right: 2%; top: 702px; width: 29%; height: auto; }
+
+      /* ROW 4 — gear + travel */
+      .c-gear    { left: 2%;  top: 862px; width: 46%; height: 140px; }
+      .c-travel  { right: 2%; top: 862px; width: 46%; height: 140px; }
+
+      /* ROW 5 — blog, contact, youtube */
+      .c-blog    { left: 2%;  top: 1022px; width: 29%; }
+      .c-app     { left: 34%; top: 1022px; width: 32%; }
+      .c-youtube { right: 2%; top: 1022px; width: 29%; }
+
+      /* Video section: natural 16:9 banner on portrait mobile */
       .video-section {
         height: 56.25vw;
         min-height: 200px;
       }
-      .video-section-overlay {
-        padding: 20px 24px;
-      }
-      .video-section-title {
-        font-size: 28px;
-      }
+      .video-section-overlay { padding: 20px 24px; }
+      .video-section-title { font-size: 28px; }
     }
   </style>
 </head>
