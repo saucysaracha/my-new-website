@@ -37,7 +37,8 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--mono);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       cursor: none;
     }
 
@@ -127,8 +128,50 @@
 
     /* SCENE */
     .scene {
-      position: fixed; inset: 0;
+      position: relative;
+      width: 100%;
+      height: 100vh;
       z-index: 1;
+    }
+
+    /* CINEMATIC VIDEO SECTION */
+    .video-section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+    }
+    .video-section video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .video-section-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.0) 40%, rgba(0,0,0,0.35) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 56px 64px;
+    }
+    .video-section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 12px;
+    }
+    .video-section-title {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 52px;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
     }
 
     /* CARDS - base */
@@ -745,6 +788,17 @@
     </div>
 
   </div><!-- /scene -->
+
+  <!-- CINEMATIC VIDEO SECTION -->
+  <section class="video-section">
+    <video autoplay muted loop playsinline>
+      <source src="SanDiegoAngel.mp4" type="video/mp4" />
+    </video>
+    <div class="video-section-overlay">
+      <div class="video-section-label">On Location</div>
+      <div class="video-section-title">San Diego<br/>Angel</div>
+    </div>
+  </section>
 
   <!-- MODAL -->
   <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
