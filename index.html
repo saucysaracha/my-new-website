@@ -618,6 +618,17 @@
         height: 1400px;
       }
       nav { width: 90%; }
+      /* On portrait mobile, render video at natural 16:9 width so it looks like a landscape banner */
+      .video-section {
+        height: 56.25vw;
+        min-height: 200px;
+      }
+      .video-section-overlay {
+        padding: 20px 24px;
+      }
+      .video-section-title {
+        font-size: 28px;
+      }
     }
   </style>
 </head>
@@ -791,7 +802,7 @@
 
   <!-- CINEMATIC VIDEO SECTION -->
   <section class="video-section">
-    <video autoplay muted loop playsinline>
+    <video id="cinemaVideo" autoplay muted loop playsinline webkit-playsinline preload="auto">
       <source src="SanDiegoAngel.mp4" type="video/mp4" />
     </video>
     <div class="video-section-overlay">
@@ -920,6 +931,16 @@
       if (e.target === document.getElementById('modalOverlay')) closeModal();
     }
     document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+    // Force inline autoplay on iOS (requires muted + playsinline, already set)
+    const cinemaVideo = document.getElementById('cinemaVideo');
+    if (cinemaVideo) {
+      cinemaVideo.play().catch(() => {
+        // If blocked, retry on first user interaction
+        document.addEventListener('touchstart', () => cinemaVideo.play().catch(()=>{}), { once: true });
+        document.addEventListener('click', () => cinemaVideo.play().catch(()=>{}), { once: true });
+      });
+    }
   </script>
 </body>
 </html>
