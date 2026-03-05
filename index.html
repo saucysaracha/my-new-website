@@ -126,10 +126,6 @@
     .scene {
       position: relative;
       z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      padding: 88px 20px 40px;
       max-width: 1300px;
       margin: 0 auto;
     }
@@ -183,8 +179,8 @@
       to   { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    /* ── HERO ── spans col 1–2, row 1–2 */
-    .card-hero { grid-column: 1 / 3; grid-row: 1 / 3; z-index: 10; animation-delay: 0.05s; }
+    /* ── HERO ── */
+    .card-hero { z-index: 10; animation-delay: 0.05s; }
     .card-hero:hover { transform: scale(1.01) translateY(-2px); }
 
     .hero-img-area {
@@ -272,28 +268,28 @@
     .card-feature-label { font-family: var(--mono); font-size: 15px; color: var(--text); letter-spacing: 0.02em; }
     .card-feature-sub { font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
 
-    /* ── GRID POSITIONS ──
-      Col 1  | Col 2  | Col 3
-      --------|--------|--------
-      HERO    | HERO   | SPECS    row 1
-      HERO    | HERO   | BRAND    row 2
-      VLOG    | GEAR   | PORTRAIT row 3
-      VLOG    | ABOUT  | YOUTUBE  row 4
-      APP     | TRAVEL | TRAVEL   row 5
-      BLOG    | TRAVEL | TRAVEL   row 6
-    */
-    .c-specs    { grid-column: 3; grid-row: 1; animation-delay: 0.30s; }
-    .c-brand    { grid-column: 3; grid-row: 2; animation-delay: 0.25s; }
-    .c-vlog     { grid-column: 1; grid-row: 3 / 5; animation-delay: 0.20s; min-height: 260px; }
-    .c-gear     { grid-column: 2; grid-row: 3; animation-delay: 0.20s; }
-    .c-portrait { grid-column: 3; grid-row: 3; animation-delay: 0.35s; }
-    .c-about    { grid-column: 2; grid-row: 4; animation-delay: 0.40s; }
-    .c-youtube  { grid-column: 3; grid-row: 4; animation-delay: 0.30s; }
-    .c-app      { grid-column: 1; grid-row: 5; animation-delay: 0.50s; }
-    .c-travel   { grid-column: 2 / 4; grid-row: 5 / 7; animation-delay: 0.35s; min-height: 260px; }
-    .c-blog     { grid-column: 1; grid-row: 6; animation-delay: 0.45s; }
+    /* ── DESKTOP: scattered collage layout ── */
+    @media (min-width: 769px) {
+      .scene {
+        display: block;
+        min-height: 860px;
+        padding: 88px 0 60px;
+      }
+      .card { position: absolute; }
+      .card-hero  { top: 20px;  left: 520px; width: 305px; }
+      .c-vlog     { top: 20px;  left: 20px;  width: 305px; height: 270px; animation-delay: 0.20s; }
+      .c-portrait { top: 20px;  left: 340px; width: 165px; animation-delay: 0.35s; }
+      .c-brand    { top: 305px; left: 20px;  width: 210px; height: 155px; animation-delay: 0.25s; }
+      .c-specs    { top: 295px; left: 340px; width: 165px; animation-delay: 0.30s; }
+      .c-gear     { top: 20px;  left: 855px; width: 200px; animation-delay: 0.20s; }
+      .c-about    { top: 190px; left: 855px; width: 200px; animation-delay: 0.40s; }
+      .c-youtube  { top: 355px; left: 855px; width: 200px; animation-delay: 0.30s; }
+      .c-app      { top: 475px; left: 20px;  width: 175px; animation-delay: 0.50s; }
+      .c-blog     { top: 450px; left: 340px; width: 165px; animation-delay: 0.45s; }
+      .c-travel   { top: 545px; left: 540px; width: 305px; min-height: 255px; animation-delay: 0.35s; }
+    }
 
-    /* Vlog video fills the grid cell */
+    /* Vlog video fills the card */
     .c-vlog video {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
@@ -369,10 +365,13 @@
       nav { width: 90%; }
       .intro-section { height: 100svh; }
       .scene {
+        display: grid;
         grid-template-columns: 1fr 1fr;
+        min-height: auto;
         padding: 80px 12px 32px;
         gap: 10px;
       }
+      .card { position: relative; }
       .card-hero  { grid-column: 1 / 3; grid-row: 1; }
       .c-specs    { grid-column: 1; grid-row: 2; }
       .c-brand    { grid-column: 2; grid-row: 2; }
@@ -557,8 +556,7 @@
       <source src="SanDiegoAngel.mp4" type="video/mp4" />
     </video>
     <div class="video-section-overlay">
-      <div class="video-section-label">On Location</div>
-      <div class="video-section-title">San Diego<br/>Angel</div>
+      <div class="video-section-title">a trip to san diego</div>
     </div>
   </section>
 
